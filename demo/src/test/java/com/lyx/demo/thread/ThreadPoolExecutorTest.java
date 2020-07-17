@@ -28,10 +28,9 @@ public class ThreadPoolExecutorTest {
 	private ThreadPoolExecutor threadPool;
 
 	@Test
-	public void test1(){
-		for(int i=1270;i<10000;i++)
-		{
-			if(i%72 ==0 && String.valueOf(i).substring(1,3).equals("27")) {
+	public void test1() {
+		for (int i = 1270; i < 10000; i++) {
+			if (i % 72 == 0 && String.valueOf(i).substring(1, 3).equals("27")) {
 				System.out.println(i);
 			}
 		}
