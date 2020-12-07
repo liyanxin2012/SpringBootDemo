@@ -1,9 +1,12 @@
 plugins {
+    id "com.google.protobuf" version "0.8.12"
     id 'org.springframework.boot' version '2.3.1.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
 }
 
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
 group = 'com.lyx'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
@@ -13,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter'
@@ -22,6 +26,9 @@ dependencies {
 
     implementation 'javax.validation:validation-api:2.0.1.Final'
 
+    implementation 'com.google.protobuf:protobuf-java:3.7.1'
+    implementation 'com.google.protobuf:protobuf-java-util:3.7.1'
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
@@ -29,6 +36,14 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+sourceSets{
+    main{
+       proto{
+           srcDir "src/main/proto"
+       }
     }
 }
 

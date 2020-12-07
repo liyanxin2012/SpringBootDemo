@@ -7,5 +7,10 @@ package com.lyx.demo.domain.event.publisher;
  */
 public interface DomainEventPublisher {
 
+	/**
+	 * 发布事件
+	 *
+	 * @param domainEvent
+	 */
 	void publishEvent(Object domainEvent);
 }

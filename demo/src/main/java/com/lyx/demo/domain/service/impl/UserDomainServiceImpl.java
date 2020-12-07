@@ -38,31 +38,31 @@ public class UserDomainServiceImpl implements UserDomainService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String addUser(UserEntity user) {
-		if (user == null) {
-			ErrorCodeEnum.NOT_EXIST_USER.throwException();
+	public UserEntity createUser(String userName, String cityCode) {
+		if (UserUtil.isValidUserName(userName) == false) {
+			ErrorCodeEnum.ILLEGAL_USER_NAME.throwException(new Object[]{userName});
 		}
 
-		if (UserUtil.isValidUserName(user.getUserName()) == false) {
-			ErrorCodeEnum.ILLEGAL_USER_NAME.throwException(new Object[]{user.getUserName()});
-		}
-
-		UserEntity existUser = userRepository.loadUserByUserName(user.getUserName());
+		UserEntity existUser = userRepository.loadUserByUserName(userName);
 		if (existUser != null) {
-			ErrorCodeEnum.EXIST_USER_NAME.throwException(new Object[]{user.getUserName()});
+			ErrorCodeEnum.EXIST_USER_NAME.throwException(new Object[]{userName});
 		}
 
-		user.setUserId(UUID.randomUUID().toString().replaceAll("-", ""));
-		user.setStatus(UserStatusEnum.ACTIVE.getCode());
-		user.setCreateTime(new Date());
-		user.setUpdateTime(new Date());
+		UserEntity userEntity = new UserEntity();
 
-		userRepository.saveUser(user);
+		userEntity.setUserName(userName);
+		userEntity.setCityCode(cityCode);
+		userEntity.setUserId(UUID.randomUUID().toString().replaceAll("-", ""));
+		userEntity.setStatus(UserStatusEnum.ACTIVE.getCode());
+		userEntity.setCreateTime(new Date());
+		userEntity.setUpdateTime(new Date());
+
+		userRepository.saveUser(userEntity);
 
 		// 发布领域事件
-		userEventPublisher.registeredUser(user);
+		userEventPublisher.registeredUser(userEntity);
 
-		return user.getUserId();
+		return userEntity;
 	}
 
 	/**

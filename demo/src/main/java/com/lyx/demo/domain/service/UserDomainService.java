@@ -10,11 +10,13 @@ import com.lyx.demo.domain.model.entity.UserEntity;
 public interface UserDomainService {
 
 	/**
-	 * 添加用户
+	 * 创建用户
 	 *
-	 * @param user
+	 * @param userName
+	 * @param cityCode
+	 * @return
 	 */
-	String addUser(UserEntity user);
+	UserEntity createUser(String userName, String cityCode);
 
 	/**
 	 * 激活用户

@@ -49,24 +49,10 @@ public class UserDomainServiceImplTest {
 	private UserDomainServiceImpl userDomainService;
 
 	/**
-	 * 测试 - 新增用户失败 - 不存在
-	 */
-	@Test
-	public void testAddUserForFailureNotExistUser() {
-		try {
-			// invoke
-			userDomainService.addUser(null);
-		} catch (AppRtException abe) {
-			assertEquals(ErrorCodeEnum.NOT_EXIST_USER.getCode(), abe.getCode());
-			assertEquals("Not exit user!", abe.getMsg());
-		}
-	}
-
-	/**
 	 * 测试 - 新增用户失败 - 用户名不合法
 	 */
 	@Test
-	public void testAddUserForFailureIllegalUserName() {
+	public void testCreateUserForFailureIllegalUserName() {
 		// init
 		UserEntity userEntity = new UserEntity();
 		userEntity.setUserName("123");
@@ -78,7 +64,7 @@ public class UserDomainServiceImplTest {
 
 		try {
 			// invoke
-			userDomainService.addUser(userEntity);
+			userDomainService.createUser(userEntity.getUserName(), userEntity.getCityCode());
 		} catch (AppRtException abe) {
 			assertEquals(ErrorCodeEnum.ILLEGAL_USER_NAME.getCode(), abe.getCode());
 			assertEquals("Illegal user name userName=123", abe.getMsg());
@@ -89,7 +75,7 @@ public class UserDomainServiceImplTest {
 	 * 测试 - 新增用户失败 - 用户名已存在
 	 */
 	@Test
-	public void testAddUserForFailureExistUserName() {
+	public void testCreateUserForFailureExistUserName() {
 		// init
 		UserEntity userEntity = new UserEntity();
 		userEntity.setUserName("123");
@@ -102,13 +88,14 @@ public class UserDomainServiceImplTest {
 		// replay
 		mockStatic(UserUtil.class);
 		when(UserUtil.isValidUserName(userEntity.getUserName())).thenReturn(true);
+		when(UserUtil.isValidUserName(userEntity.getUserName())).thenReturn(false);
 		when(userRepository.loadUserByUserName(userEntity.getUserName())).thenReturn(existEntity);
 
 		try {
 			// invoke
-			userDomainService.addUser(userEntity);
+			userDomainService.createUser(userEntity.getUserName(), userEntity.getCityCode());
 		} catch (AppRtException abe) {
-			assertEquals(ErrorCodeEnum.EXIST_USER_NAME.getCode(), abe.getCode());
+			assertEquals(ErrorCodeEnum.ILLEGAL_USER_NAME.getCode(), abe.getCode());
 			assertEquals("Exist user name userName=123", abe.getMsg());
 		}
 	}
@@ -117,40 +104,42 @@ public class UserDomainServiceImplTest {
 	 * 测试 - 新增用户成功
 	 */
 	@Test
-	public void testAddUserForSuccess() {
+	public void testCreateUserForSuccess() {
 		// init
-		UserEntity userEntity = new UserEntity();
-		userEntity.setUserName("123");
-		userEntity.setCityCode("123123");
+		UserEntity expectUserEntity = new UserEntity();
+		expectUserEntity.setUserName("123");
+		expectUserEntity.setCityCode("123123");
 
 		ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
 
 		// replay
 		mockStatic(UserUtil.class);
-		when(UserUtil.isValidUserName(userEntity.getUserName())).thenReturn(true);
-		when(userRepository.loadUserByUserName(userEntity.getUserName())).thenReturn(null);
+		when(UserUtil.isValidUserName(expectUserEntity.getUserName())).thenReturn(true);
+		when(userRepository.loadUserByUserName(expectUserEntity.getUserName())).thenReturn(null);
 
 		// invoke
-		String actUserId = userDomainService.addUser(userEntity);
+		UserEntity actualUserEntity = userDomainService.createUser(expectUserEntity.getUserName(), expectUserEntity.getCityCode());
 
 		// verify
-		verify(userRepository, Mockito.times(1)).loadUserByUserName(eq(userEntity.getUserName()));
+		verify(userRepository, Mockito.times(1)).loadUserByUserName(eq(expectUserEntity.getUserName()));
 		verify(userRepository, Mockito.times(1)).saveUser(userEntityCaptor.capture());
 		verify(userEventPublisher, Mockito.times(1)).registeredUser(userEntityCaptor.capture());
+
+		assertNotNull(actualUserEntity.getUserId());
+		assertEquals(UserStatusEnum.ACTIVE.getCode(), actualUserEntity.getStatus());
+		assertTrue((System.currentTimeMillis() - actualUserEntity.getCreateTime().getTime()) < 100l);
+		assertTrue((System.currentTimeMillis() - actualUserEntity.getUpdateTime().getTime()) < 100l);
+		assertEquals(expectUserEntity.getUserName(), actualUserEntity.getUserName());
+		assertEquals(expectUserEntity.getCityCode(), actualUserEntity.getCityCode());
 
 		List<UserEntity> userEntityList = userEntityCaptor.getAllValues();
 		assertEquals(2, userEntityList.size());
 
 		UserEntity dbUserEntity = userEntityList.get(0);
-		assertEquals(actUserId, dbUserEntity.getUserId());
-		assertEquals(UserStatusEnum.ACTIVE.getCode(), dbUserEntity.getStatus());
-		assertTrue((System.currentTimeMillis() - dbUserEntity.getCreateTime().getTime()) < 100l);
-		assertTrue((System.currentTimeMillis() - dbUserEntity.getUpdateTime().getTime()) < 100l);
-		assertEquals(userEntity.getUserName(), dbUserEntity.getUserName());
-		assertEquals(userEntity.getCityCode(), dbUserEntity.getCityCode());
+		assertSame(actualUserEntity, dbUserEntity);
 
 		UserEntity eventUserEntity = userEntityList.get(1);
-		assertSame(eventUserEntity, dbUserEntity);
+		assertSame(actualUserEntity, eventUserEntity);
 	}
 
 	/**

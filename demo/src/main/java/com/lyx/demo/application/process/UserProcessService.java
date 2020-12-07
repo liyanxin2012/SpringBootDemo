@@ -11,16 +11,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserProcessService {
 
+	/**
+	 * 用户领域服务
+	 */
 	@Autowired
 	private UserDomainService userDomainService;
 
 	/**
-	 * 添加用户
+	 * 创建用户
 	 *
-	 * @param user
-	 * @return 用户编号
+	 * @param userName
+	 * @param cityCode
+	 * @return
 	 */
-	public String addUser(UserEntity user) {
-		return userDomainService.addUser(user);
+	public UserEntity createUser(String userName, String cityCode) {
+		return userDomainService.createUser(userName, cityCode);
 	}
 }
