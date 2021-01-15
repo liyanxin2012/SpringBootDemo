@@ -55,7 +55,7 @@ public class UserDomainServiceImplTest {
 	public void testCreateUserForFailureIllegalUserName() {
 		// init
 		UserEntity userEntity = new UserEntity();
-		userEntity.setUserName("123");
+		userEntity.setUserName(null);
 		userEntity.setCityCode("123123");
 
 		// replay
@@ -67,7 +67,7 @@ public class UserDomainServiceImplTest {
 			userDomainService.createUser(userEntity.getUserName(), userEntity.getCityCode());
 		} catch (AppRtException abe) {
 			assertEquals(ErrorCodeEnum.ILLEGAL_USER_NAME.getCode(), abe.getCode());
-			assertEquals("Illegal user name userName=123", abe.getMsg());
+			assertEquals("Illegal user name userName=null", abe.getMsg());
 		}
 	}
 
@@ -88,14 +88,13 @@ public class UserDomainServiceImplTest {
 		// replay
 		mockStatic(UserUtil.class);
 		when(UserUtil.isValidUserName(userEntity.getUserName())).thenReturn(true);
-		when(UserUtil.isValidUserName(userEntity.getUserName())).thenReturn(false);
 		when(userRepository.loadUserByUserName(userEntity.getUserName())).thenReturn(existEntity);
 
 		try {
 			// invoke
 			userDomainService.createUser(userEntity.getUserName(), userEntity.getCityCode());
 		} catch (AppRtException abe) {
-			assertEquals(ErrorCodeEnum.ILLEGAL_USER_NAME.getCode(), abe.getCode());
+			assertEquals(ErrorCodeEnum.EXIST_USER_NAME.getCode(), abe.getCode());
 			assertEquals("Exist user name userName=123", abe.getMsg());
 		}
 	}

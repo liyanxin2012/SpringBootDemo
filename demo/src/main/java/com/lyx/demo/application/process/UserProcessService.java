@@ -5,6 +5,8 @@ import com.lyx.demo.domain.service.UserDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Ryan
  */
@@ -24,7 +26,7 @@ public class UserProcessService {
 	 * @param cityCode
 	 * @return
 	 */
-	public UserEntity createUser(String userName, String cityCode) {
+	public UserEntity createUser(@NotNull String userName, String cityCode) {
 		return userDomainService.createUser(userName, cityCode);
 	}
 }

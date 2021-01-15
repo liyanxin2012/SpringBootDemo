@@ -29,6 +29,8 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java:3.7.1'
     implementation 'com.google.protobuf:protobuf-java-util:3.7.1'
 
+    implementation 'com.docusign:docusign-esign-java:3.10.1'
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
