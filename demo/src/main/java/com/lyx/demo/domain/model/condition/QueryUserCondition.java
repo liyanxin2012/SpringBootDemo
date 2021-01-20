@@ -1,13 +1,23 @@
 package com.lyx.demo.domain.model.condition;
 
 /**
+ * 用户查询对象
+ *
  * @author Ryan
  */
-public class CityCondition {
+public class QueryUserCondition {
+
+	private String userId;
 
 	private String cityCode;
 
-	private String cityName;
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	public String getCityCode() {
 		return cityCode;
@@ -15,13 +25,5 @@ public class CityCondition {
 
 	public void setCityCode(String cityCode) {
 		this.cityCode = cityCode;
-	}
-
-	public String getCityName() {
-		return cityName;
-	}
-
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
 	}
 }

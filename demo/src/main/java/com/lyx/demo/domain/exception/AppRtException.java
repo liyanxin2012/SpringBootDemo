@@ -27,6 +27,11 @@ public class AppRtException extends RuntimeException {
 		this.code = code;
 	}
 
+	public AppRtException(String code, Throwable t) {
+		super(String.format("AppRtException[%s]", code), t);
+		this.code = code;
+	}
+
 	public AppRtException(String code, String msg) {
 		super(String.format("AppRtException[%s]:%s", code, msg));
 		this.code = code;

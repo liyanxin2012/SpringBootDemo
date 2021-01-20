@@ -1,6 +1,7 @@
 package com.lyx.demo.domain.repository;
 
-import com.lyx.demo.domain.model.condition.UserCondition;
+import com.lyx.demo.domain.model.QueryResult;
+import com.lyx.demo.domain.model.condition.QueryUserCondition;
 import com.lyx.demo.domain.model.entity.UserEntity;
 
 import java.util.List;
@@ -27,14 +28,6 @@ public interface UserRepository {
 	 * @return 用户信息
 	 */
 	UserEntity loadUser(String userId);
-
-	/**
-	 * 获取用户
-	 *
-	 * @param userId
-	 * @return
-	 */
-	UserEntity loadUserForUpdate(String userId);
 
 	/**
 	 * 加载用户信息
@@ -64,5 +57,5 @@ public interface UserRepository {
 	 * @param condition 查询对象
 	 * @return
 	 */
-	List<UserEntity> findUser(UserCondition condition);
+	QueryResult<UserEntity> queryUserForResult(QueryUserCondition condition);
 }

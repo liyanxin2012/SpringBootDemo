@@ -1,12 +1,11 @@
 package com.lyx.demo.application.show;
 
-import com.lyx.demo.domain.model.condition.UserCondition;
+import com.lyx.demo.domain.model.QueryResult;
+import com.lyx.demo.domain.model.condition.QueryUserCondition;
 import com.lyx.demo.domain.model.entity.UserEntity;
 import com.lyx.demo.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @author Ryan
@@ -33,11 +32,13 @@ public class UserShowService {
 	/**
 	 * 查询用户信息
 	 *
-	 * @param condition 查询对象
+	 * @param condition
+	 * @param firstResult
+	 * @param maxResults
 	 * @return
 	 */
-	public List<UserEntity> findUser(UserCondition condition) {
-		return userRepository.findUser(condition);
+	public QueryResult<UserEntity> queryUserForResult(QueryUserCondition condition, int firstResult, int maxResults) {
+		return userRepository.queryUserForResult(condition);
 	}
 
 }

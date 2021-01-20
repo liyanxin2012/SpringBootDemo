@@ -1,5 +1,6 @@
 package com.lyx.demo.domain.service.impl;
 
+import com.lyx.demo.domain.exception.AppRtException;
 import com.lyx.demo.domain.exception.ErrorCodeEnum;
 import com.lyx.demo.domain.model.enums.UserStatusEnum;
 import com.lyx.demo.domain.event.publisher.UserEventPublisher;
@@ -69,10 +70,24 @@ public class UserDomainServiceImpl implements UserDomainService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void activeUser(String userId) {
+	public void deleteUser(String userId) {
 		UserEntity userEntity = userRepository.loadUser(userId);
 		if (userEntity == null) {
 			ErrorCodeEnum.NOT_FOUND_USER.throwException(new Object[]{userId});
+		}
+
+
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activeUser(String userId) {
+		UserEntity userEntity = userRepository.loadUser(userId);
+		if (userEntity == null) {
+			throw new AppRtException(ErrorCodeEnum.NOT_FOUND_USER.getCode(), ErrorCodeEnum.NOT_FOUND_USER.getMsg(), new Object[]{userId});
 		}
 
 		userEntity.setStatus(UserStatusEnum.ACTIVE.getCode());
@@ -91,7 +106,7 @@ public class UserDomainServiceImpl implements UserDomainService {
 	public void disableUser(String userId) {
 		UserEntity userEntity = userRepository.loadUser(userId);
 		if (userEntity == null) {
-			ErrorCodeEnum.NOT_FOUND_USER.throwException(new Object[]{userId});
+			throw new AppRtException(ErrorCodeEnum.NOT_FOUND_USER.getCode(), ErrorCodeEnum.NOT_FOUND_USER.getMsg(), new Object[]{userId});
 		}
 
 		userEntity.setStatus(UserStatusEnum.DISABLE.getCode());
@@ -101,5 +116,13 @@ public class UserDomainServiceImpl implements UserDomainService {
 
 		// 发布领域事件
 		userEventPublisher.disableUser(userEntity);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateUser(String userId, String userName, String cityCode) {
+
 	}
 }

@@ -29,4 +29,5 @@ public class UserProcessService {
 	public UserEntity createUser(@NotNull String userName, String cityCode) {
 		return userDomainService.createUser(userName, cityCode);
 	}
+
 }

@@ -19,6 +19,13 @@ public interface UserDomainService {
 	UserEntity createUser(String userName, String cityCode);
 
 	/**
+	 * 禁用用户
+	 *
+	 * @param userId
+	 */
+	void deleteUser(String userId);
+
+	/**
 	 * 激活用户
 	 *
 	 * @param userId 用户编号
@@ -31,4 +38,9 @@ public interface UserDomainService {
 	 * @param userId
 	 */
 	void disableUser(String userId);
+
+	/**
+	 * 更新用户信息
+	 */
+	void updateUser(String userId, String userName, String cityCode);
 }

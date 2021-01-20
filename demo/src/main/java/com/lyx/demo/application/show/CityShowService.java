@@ -1,8 +1,7 @@
 package com.lyx.demo.application.show;
 
-import com.lyx.demo.domain.model.condition.CityCondition;
+import com.lyx.demo.domain.facade.CityFacade;
 import com.lyx.demo.domain.model.valueobject.CityVO;
-import com.lyx.demo.domain.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ public class CityShowService {
 	 * 用户资源库
 	 */
 	@Autowired
-	private CityRepository cityRepository;
+	private CityFacade cityFacade;
 
 	/**
 	 * 根据用户编号获取用户
@@ -27,17 +26,6 @@ public class CityShowService {
 	 * @return
 	 */
 	public CityVO loadCityVO(String cityCode) {
-		return cityRepository.loadCityVO(cityCode);
+		return cityFacade.loadCityVO(cityCode);
 	}
-
-	/**
-	 * 查询用户信息
-	 *
-	 * @param condition 查询对象
-	 * @return
-	 */
-	public List<CityVO> findCityVO(CityCondition condition) {
-		return cityRepository.findCityVO(condition);
-	}
-
 }
