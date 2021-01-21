@@ -5,7 +5,7 @@ package com.lyx.demo.domain.exception;
  */
 public enum ErrorCodeEnum {
 
-	SUCCESS("000", "Success"),
+	SUCCESS("0", "Success!"),
 	DELETED_USER("DEMO.001", "Deleted user userId=%s!"),
 	NOT_EXIST_USER("DEMO.002", "Not exist user userId=%s"),
 	ILLEGAL_USER_NAME("DEMO.003", "Illegal user name userName=%s"),

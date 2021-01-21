@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: demo
+  message:
+    basename: i18n.messages
+    encoding: UTF-8
+
+servlet:
+  port: 8082
