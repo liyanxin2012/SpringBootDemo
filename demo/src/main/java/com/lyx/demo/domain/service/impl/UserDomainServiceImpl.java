@@ -7,7 +7,7 @@ import com.lyx.demo.domain.model.enums.UserStatusEnum;
 import com.lyx.demo.domain.repository.UserRepository;
 import com.lyx.demo.domain.service.UserDomainService;
 import com.lyx.demo.domain.util.UserUtil;
-import com.lyx.demo.infrastructure.event.enums.UserChangedTypes;
+import com.lyx.demo.domain.event.external.enums.UserChangedTypes;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

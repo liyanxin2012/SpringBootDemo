@@ -1,4 +1,4 @@
-package com.lyx.demo.infrastructure.event.enums;
+package com.lyx.demo.domain.event.external.enums;
 
 /**
  * 用户已变更属性类型

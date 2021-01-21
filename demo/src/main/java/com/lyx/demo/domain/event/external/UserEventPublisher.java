@@ -1,7 +1,7 @@
 package com.lyx.demo.domain.event.external;
 
 import com.lyx.demo.domain.model.entity.UserEntity;
-import com.lyx.demo.infrastructure.event.enums.UserChangedTypes;
+import com.lyx.demo.domain.event.external.enums.UserChangedTypes;
 
 /**
  * 用户事件发布器

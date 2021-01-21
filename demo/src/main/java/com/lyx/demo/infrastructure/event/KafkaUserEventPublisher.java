@@ -3,7 +3,7 @@ package com.lyx.demo.infrastructure.event;
 import com.alibaba.fastjson.JSON;
 import com.lyx.demo.domain.event.external.UserEventPublisher;
 import com.lyx.demo.domain.model.entity.UserEntity;
-import com.lyx.demo.infrastructure.event.enums.UserChangedTypes;
+import com.lyx.demo.domain.event.external.enums.UserChangedTypes;
 import com.lyx.demo.infrastructure.event.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
