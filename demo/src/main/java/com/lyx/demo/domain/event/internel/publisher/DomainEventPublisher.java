@@ -1,4 +1,4 @@
-package com.lyx.demo.domain.event.publisher;
+package com.lyx.demo.domain.event.internel.publisher;
 
 /**
  * 领域事件发布器

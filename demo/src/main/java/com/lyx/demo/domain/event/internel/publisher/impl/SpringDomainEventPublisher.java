@@ -1,6 +1,6 @@
-package com.lyx.demo.domain.event.publisher.impl;
+package com.lyx.demo.domain.event.internel.publisher.impl;
 
-import com.lyx.demo.domain.event.publisher.DomainEventPublisher;
+import com.lyx.demo.domain.event.internel.publisher.DomainEventPublisher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 

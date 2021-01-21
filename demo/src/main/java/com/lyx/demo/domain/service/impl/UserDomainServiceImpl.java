@@ -1,6 +1,6 @@
 package com.lyx.demo.domain.service.impl;
 
-import com.lyx.demo.domain.event.publisher.UserEventPublisher;
+import com.lyx.demo.domain.event.external.UserEventPublisher;
 import com.lyx.demo.domain.exception.ErrorCodeEnum;
 import com.lyx.demo.domain.model.entity.UserEntity;
 import com.lyx.demo.domain.model.enums.UserStatusEnum;
@@ -8,7 +8,6 @@ import com.lyx.demo.domain.repository.UserRepository;
 import com.lyx.demo.domain.service.UserDomainService;
 import com.lyx.demo.domain.util.UserUtil;
 import com.lyx.demo.infrastructure.event.enums.UserChangedTypes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

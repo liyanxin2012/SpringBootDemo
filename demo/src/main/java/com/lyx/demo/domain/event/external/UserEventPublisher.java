@@ -1,8 +1,7 @@
-package com.lyx.demo.domain.event.publisher;
+package com.lyx.demo.domain.event.external;
 
 import com.lyx.demo.domain.model.entity.UserEntity;
 import com.lyx.demo.infrastructure.event.enums.UserChangedTypes;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 /**
  * 用户事件发布器

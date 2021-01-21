@@ -1,6 +1,6 @@
 package com.lyx.demo.domain.service.impl;
 
-import com.lyx.demo.domain.event.publisher.UserEventPublisher;
+import com.lyx.demo.domain.event.external.UserEventPublisher;
 import com.lyx.demo.domain.exception.AppRtException;
 import com.lyx.demo.domain.exception.ErrorCodeEnum;
 import com.lyx.demo.domain.model.entity.UserEntity;
