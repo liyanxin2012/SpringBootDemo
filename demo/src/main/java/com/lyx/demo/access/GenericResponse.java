@@ -47,7 +47,7 @@ public class GenericResponse<T> {
 	 * @param errMsg
 	 * @return
 	 */
-	public static GenericResponse<Void> responseOf(String errNo, String errMsg) {
+	public static <T> GenericResponse<T> responseOf(String errNo, String errMsg) {
 		return responseOf(errNo, errMsg, null);
 	}
 

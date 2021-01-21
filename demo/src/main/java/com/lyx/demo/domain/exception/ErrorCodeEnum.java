@@ -10,7 +10,8 @@ public enum ErrorCodeEnum {
 	NOT_EXIST_USER("DEMO.002", "Not exist user userId=%s"),
 	ILLEGAL_USER_NAME("DEMO.003", "Illegal user name userName=%s"),
 	ILLEGAL_USER_STATUS("DEMO.004", "Illegal user status userId/status=%s/%s"),
-	EXIST_USER_NAME("DEMO.005", "Exist user name userName=%s");
+	EXIST_USER_NAME("DEMO.005", "Exist user name userName=%s"),
+	SYSTEM_ERROR("DEMO.096", "System error!");
 
 	private String code;
 
