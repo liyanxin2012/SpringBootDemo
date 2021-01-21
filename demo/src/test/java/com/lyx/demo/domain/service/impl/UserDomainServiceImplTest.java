@@ -125,7 +125,7 @@ public class UserDomainServiceImplTest {
 		verify(userEventPublisher, Mockito.times(1)).registeredUser(userEntityCaptor.capture());
 
 		assertNotNull(actualUserEntity.getUserId());
-		assertEquals(UserStatusEnum.ACTIVE.getCode(), actualUserEntity.getStatus());
+		assertEquals(UserStatusEnum.ACTIVATED.getCode(), actualUserEntity.getStatus());
 		assertTrue((System.currentTimeMillis() - actualUserEntity.getCreateTime().getTime()) < 100l);
 		assertTrue((System.currentTimeMillis() - actualUserEntity.getUpdateTime().getTime()) < 100l);
 		assertEquals(expectUserEntity.getUserName(), actualUserEntity.getUserName());
@@ -156,8 +156,8 @@ public class UserDomainServiceImplTest {
 			// invoke
 			userDomainService.activeUser(userId);
 		} catch (AppRtException abe) {
-			assertEquals(ErrorCodeEnum.NOT_FOUND_USER.getCode(), abe.getCode());
-			assertEquals("Not found user userId=123", abe.getMsg());
+			assertEquals(ErrorCodeEnum.NOT_EXIST_USER.getCode(), abe.getCode());
+			assertEquals("Not exist user userId=123", abe.getMsg());
 		}
 	}
 
@@ -173,7 +173,7 @@ public class UserDomainServiceImplTest {
 		userEntity.setUserId(userId);
 		userEntity.setUserName("123");
 		userEntity.setCityCode("123123");
-		userEntity.setStatus(UserStatusEnum.DISABLE.getCode());
+		userEntity.setStatus(UserStatusEnum.DISABLED.getCode());
 		userEntity.setCreateTime(new Date());
 
 		ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
@@ -186,15 +186,15 @@ public class UserDomainServiceImplTest {
 
 		// verify
 		verify(userRepository, Mockito.times(1)).loadUser(eq(userId));
-		verify(userRepository, Mockito.times(1)).activeUser(userEntityCaptor.capture());
-		verify(userEventPublisher, Mockito.times(1)).activeUser(userEntityCaptor.capture());
+		verify(userRepository, Mockito.times(1)).updateUser(userEntityCaptor.capture());
+		verify(userEventPublisher, Mockito.times(1)).activatedUser(userEntityCaptor.capture());
 
 		List<UserEntity> userEntityList = userEntityCaptor.getAllValues();
 		assertEquals(2, userEntityList.size());
 
 		UserEntity dbUserEntity = userEntityList.get(0);
 		assertEquals(userId, dbUserEntity.getUserId());
-		assertEquals(UserStatusEnum.ACTIVE.getCode(), dbUserEntity.getStatus());
+		assertEquals(UserStatusEnum.ACTIVATED.getCode(), dbUserEntity.getStatus());
 		assertTrue(userEntity.getCreateTime().equals(dbUserEntity.getCreateTime()));
 		assertTrue((System.currentTimeMillis() - dbUserEntity.getUpdateTime().getTime()) < 100l);
 		assertEquals(userEntity.getUserName(), dbUserEntity.getUserName());
@@ -219,8 +219,8 @@ public class UserDomainServiceImplTest {
 			// invoke
 			userDomainService.disableUser(userId);
 		} catch (AppRtException abe) {
-			assertEquals(ErrorCodeEnum.NOT_FOUND_USER.getCode(), abe.getCode());
-			assertEquals("Not found user userId=123", abe.getMsg());
+			assertEquals(ErrorCodeEnum.NOT_EXIST_USER.getCode(), abe.getCode());
+			assertEquals("Not exist user userId=123", abe.getMsg());
 		}
 	}
 
@@ -236,7 +236,7 @@ public class UserDomainServiceImplTest {
 		userEntity.setUserId(userId);
 		userEntity.setUserName("123");
 		userEntity.setCityCode("123123");
-		userEntity.setStatus(UserStatusEnum.ACTIVE.getCode());
+		userEntity.setStatus(UserStatusEnum.ACTIVATED.getCode());
 		userEntity.setCreateTime(new Date());
 
 		ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
@@ -249,15 +249,78 @@ public class UserDomainServiceImplTest {
 
 		// verify
 		verify(userRepository, Mockito.times(1)).loadUser(eq(userId));
-		verify(userRepository, Mockito.times(1)).disableUser(userEntityCaptor.capture());
-		verify(userEventPublisher, Mockito.times(1)).disableUser(userEntityCaptor.capture());
+		verify(userRepository, Mockito.times(1)).updateUser(userEntityCaptor.capture());
+		verify(userEventPublisher, Mockito.times(1)).disabledUser(userEntityCaptor.capture());
 
 		List<UserEntity> userEntityList = userEntityCaptor.getAllValues();
 		assertEquals(2, userEntityList.size());
 
 		UserEntity dbUserEntity = userEntityList.get(0);
 		assertEquals(userId, dbUserEntity.getUserId());
-		assertEquals(UserStatusEnum.DISABLE.getCode(), dbUserEntity.getStatus());
+		assertEquals(UserStatusEnum.DISABLED.getCode(), dbUserEntity.getStatus());
+		assertTrue(userEntity.getCreateTime().equals(dbUserEntity.getCreateTime()));
+		assertTrue((System.currentTimeMillis() - dbUserEntity.getUpdateTime().getTime()) < 100l);
+		assertEquals(userEntity.getUserName(), dbUserEntity.getUserName());
+		assertEquals(userEntity.getCityCode(), dbUserEntity.getCityCode());
+
+		UserEntity eventUserEntity = userEntityList.get(1);
+		assertSame(eventUserEntity, dbUserEntity);
+	}
+
+	/**
+	 * 测试 - 删除用户失败 - 用户名已存在
+	 */
+	@Test
+	public void testDeletedUserForFailureNotFoundUser() {
+		// init
+		String userId = "123";
+
+		// replay
+		when(userRepository.loadUser(eq(userId))).thenReturn(null);
+
+		try {
+			// invoke
+			userDomainService.deleteUser(userId);
+		} catch (AppRtException abe) {
+			assertEquals(ErrorCodeEnum.NOT_EXIST_USER.getCode(), abe.getCode());
+			assertEquals("Not exist user userId=123", abe.getMsg());
+		}
+	}
+
+	/**
+	 * 测试 - 删除用户成功
+	 */
+	@Test
+	public void testDeletedUserForSuccess() {
+		// init
+		String userId = "123";
+
+		UserEntity userEntity = new UserEntity();
+		userEntity.setUserId(userId);
+		userEntity.setUserName("123");
+		userEntity.setCityCode("123123");
+		userEntity.setStatus(UserStatusEnum.ACTIVATED.getCode());
+		userEntity.setCreateTime(new Date());
+
+		ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+
+		// replay
+		when(userRepository.loadUser(eq(userId))).thenReturn(userEntity);
+
+		// invoke
+		userDomainService.deleteUser(userId);
+
+		// verify
+		verify(userRepository, Mockito.times(1)).loadUser(eq(userId));
+		verify(userRepository, Mockito.times(1)).updateUser(userEntityCaptor.capture());
+		verify(userEventPublisher, Mockito.times(1)).deletedUser(userEntityCaptor.capture());
+
+		List<UserEntity> userEntityList = userEntityCaptor.getAllValues();
+		assertEquals(2, userEntityList.size());
+
+		UserEntity dbUserEntity = userEntityList.get(0);
+		assertEquals(userId, dbUserEntity.getUserId());
+		assertEquals(UserStatusEnum.DELETED.getCode(), dbUserEntity.getStatus());
 		assertTrue(userEntity.getCreateTime().equals(dbUserEntity.getCreateTime()));
 		assertTrue((System.currentTimeMillis() - dbUserEntity.getUpdateTime().getTime()) < 100l);
 		assertEquals(userEntity.getUserName(), dbUserEntity.getUserName());

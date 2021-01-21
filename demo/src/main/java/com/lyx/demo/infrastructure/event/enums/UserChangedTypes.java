@@ -1,21 +1,19 @@
-package com.lyx.demo.domain.model.enums;
+package com.lyx.demo.infrastructure.event.enums;
 
 /**
- * 用户状态枚举类
+ * 用户已变更属性类型
  *
  * @author Ryan
  */
-public enum UserStatusEnum {
-
-	DISABLED("0", "已禁用"),
-	ACTIVATED("1", "已激活"),
-	DELETED("2", "已删除");
+public enum UserChangedTypes {
+	BASIC("0", "基础信息"),
+	STATUS("1", "变更状态");
 
 	private String code;
 
 	private String message;
 
-	UserStatusEnum(String code, String message) {
+	UserChangedTypes(String code, String message) {
 		this.code = code;
 		this.message = message;
 	}

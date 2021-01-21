@@ -28,4 +28,12 @@ public class CityVO implements Serializable {
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
 	}
+
+	@Override
+	public String toString() {
+		return "CityVO{" +
+				"cityCode='" + cityCode + '\'' +
+				", cityName='" + cityName + '\'' +
+				'}';
+	}
 }

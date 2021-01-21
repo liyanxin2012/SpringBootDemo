@@ -1,17 +1,17 @@
 package com.lyx.demo.domain.service.impl;
 
-import com.lyx.demo.domain.exception.AppRtException;
-import com.lyx.demo.domain.exception.ErrorCodeEnum;
-import com.lyx.demo.domain.model.enums.UserStatusEnum;
 import com.lyx.demo.domain.event.publisher.UserEventPublisher;
+import com.lyx.demo.domain.exception.ErrorCodeEnum;
 import com.lyx.demo.domain.model.entity.UserEntity;
+import com.lyx.demo.domain.model.enums.UserStatusEnum;
 import com.lyx.demo.domain.repository.UserRepository;
 import com.lyx.demo.domain.service.UserDomainService;
-
 import com.lyx.demo.domain.util.UserUtil;
+import com.lyx.demo.infrastructure.event.enums.UserChangedTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.UUID;
 
@@ -26,13 +26,13 @@ public class UserDomainServiceImpl implements UserDomainService {
 	/**
 	 * 用户资源库
 	 */
-	@Autowired
+	@Resource
 	private UserRepository userRepository;
 
 	/**
 	 * 用户事件发布器
 	 */
-	@Autowired
+	@Resource
 	private UserEventPublisher userEventPublisher;
 
 	/**
@@ -50,11 +50,10 @@ public class UserDomainServiceImpl implements UserDomainService {
 		}
 
 		UserEntity userEntity = new UserEntity();
-
 		userEntity.setUserName(userName);
 		userEntity.setCityCode(cityCode);
 		userEntity.setUserId(UUID.randomUUID().toString().replaceAll("-", ""));
-		userEntity.setStatus(UserStatusEnum.ACTIVE.getCode());
+		userEntity.setStatus(UserStatusEnum.ACTIVATED.getCode());
 		userEntity.setCreateTime(new Date());
 		userEntity.setUpdateTime(new Date());
 
@@ -73,11 +72,20 @@ public class UserDomainServiceImpl implements UserDomainService {
 	public void deleteUser(String userId) {
 		UserEntity userEntity = userRepository.loadUser(userId);
 		if (userEntity == null) {
-			ErrorCodeEnum.NOT_FOUND_USER.throwException(new Object[]{userId});
+			ErrorCodeEnum.NOT_EXIST_USER.throwException(new Object[]{userId});
 		}
 
+		if (UserStatusEnum.DELETED.getCode().equals(userEntity.getStatus())) {
+			ErrorCodeEnum.DELETED_USER.throwException(new Object[]{userId});
+		}
 
+		userEntity.setStatus(UserStatusEnum.DELETED.getCode());
+		userEntity.setUpdateTime(new Date());
 
+		userRepository.updateUser(userEntity);
+
+		// 发布领域事件
+		userEventPublisher.deletedUser(userEntity);
 	}
 
 	/**
@@ -87,16 +95,20 @@ public class UserDomainServiceImpl implements UserDomainService {
 	public void activeUser(String userId) {
 		UserEntity userEntity = userRepository.loadUser(userId);
 		if (userEntity == null) {
-			throw new AppRtException(ErrorCodeEnum.NOT_FOUND_USER.getCode(), ErrorCodeEnum.NOT_FOUND_USER.getMsg(), new Object[]{userId});
+			ErrorCodeEnum.NOT_EXIST_USER.throwException(new Object[]{userId});
 		}
 
-		userEntity.setStatus(UserStatusEnum.ACTIVE.getCode());
+		if (UserStatusEnum.DELETED.getCode().equals(userEntity.getStatus())) {
+			ErrorCodeEnum.DELETED_USER.throwException(new Object[]{userId});
+		}
+
+		userEntity.setStatus(UserStatusEnum.ACTIVATED.getCode());
 		userEntity.setUpdateTime(new Date());
 
-		userRepository.activeUser(userEntity);
+		userRepository.updateUser(userEntity);
 
 		// 发布领域事件
-		userEventPublisher.activeUser(userEntity);
+		userEventPublisher.activatedUser(userEntity);
 	}
 
 	/**
@@ -106,16 +118,48 @@ public class UserDomainServiceImpl implements UserDomainService {
 	public void disableUser(String userId) {
 		UserEntity userEntity = userRepository.loadUser(userId);
 		if (userEntity == null) {
-			throw new AppRtException(ErrorCodeEnum.NOT_FOUND_USER.getCode(), ErrorCodeEnum.NOT_FOUND_USER.getMsg(), new Object[]{userId});
+			ErrorCodeEnum.NOT_EXIST_USER.throwException(new Object[]{userId});
 		}
 
-		userEntity.setStatus(UserStatusEnum.DISABLE.getCode());
+		if (UserStatusEnum.DELETED.getCode().equals(userEntity.getStatus())) {
+			ErrorCodeEnum.DELETED_USER.throwException(new Object[]{userId});
+		}
+
+		userEntity.setStatus(UserStatusEnum.DISABLED.getCode());
 		userEntity.setUpdateTime(new Date());
 
-		userRepository.disableUser(userEntity);
+		userRepository.updateUser(userEntity);
 
 		// 发布领域事件
-		userEventPublisher.disableUser(userEntity);
+		userEventPublisher.disabledUser(userEntity);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateStatus(String userId, String userStatus) {
+		UserStatusEnum userStatusEnum = UserStatusEnum.valueOf(userStatus);
+		if (userStatusEnum == null) {
+			ErrorCodeEnum.ILLEGAL_USER_STATUS.throwException(new Object[]{userId, userStatus});
+		}
+
+		UserEntity userEntity = userRepository.loadUser(userId);
+		if (userEntity == null) {
+			ErrorCodeEnum.NOT_EXIST_USER.throwException(new Object[]{userId});
+		}
+
+		if (UserStatusEnum.DELETED.getCode().equals(userEntity.getStatus())) {
+			ErrorCodeEnum.DELETED_USER.throwException(new Object[]{userId});
+		}
+
+		userEntity.setStatus(userStatus);
+		userEntity.setUpdateTime(new Date());
+
+		userRepository.updateUser(userEntity);
+
+		// 发布领域事件
+		userEventPublisher.changedUser(UserChangedTypes.STATUS, userEntity);
 	}
 
 	/**
@@ -123,6 +167,22 @@ public class UserDomainServiceImpl implements UserDomainService {
 	 */
 	@Override
 	public void updateUser(String userId, String userName, String cityCode) {
+		UserEntity userEntity = userRepository.loadUser(userId);
+		if (userEntity == null) {
+			ErrorCodeEnum.NOT_EXIST_USER.throwException(new Object[]{userId});
+		}
 
+		if (UserStatusEnum.DELETED.getCode().equals(userEntity.getStatus())) {
+			ErrorCodeEnum.DELETED_USER.throwException(new Object[]{userId});
+		}
+
+		userEntity.setUserName(userName);
+		userEntity.setCityCode(cityCode);
+		userEntity.setUpdateTime(new Date());
+
+		userRepository.updateUser(userEntity);
+
+		// 发布领域事件
+		userEventPublisher.changedUser(UserChangedTypes.BASIC, userEntity);
 	}
 }

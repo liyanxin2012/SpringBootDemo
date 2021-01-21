@@ -1,5 +1,6 @@
 package com.lyx.demo.domain.repository;
 
+import com.lyx.demo.domain.model.PageResult;
 import com.lyx.demo.domain.model.QueryResult;
 import com.lyx.demo.domain.model.condition.QueryUserCondition;
 import com.lyx.demo.domain.model.entity.UserEntity;
@@ -38,24 +39,29 @@ public interface UserRepository {
 	UserEntity loadUserByUserName(String userName);
 
 	/**
-	 * 激活用户
+	 * 更新用户
 	 *
-	 * @param user
+	 * @param userEntity
 	 */
-	void activeUser(UserEntity user);
+	void updateUser(UserEntity userEntity);
 
 	/**
-	 * 禁用用户
+	 * 查询用户信息（模式1）
 	 *
-	 * @param user
-	 */
-	void disableUser(UserEntity user);
-
-	/**
-	 * 查询用户信息
-	 *
-	 * @param condition 查询对象
+	 * @param condition
+	 * @param firstResult
+	 * @param maxResults
 	 * @return
 	 */
-	QueryResult<UserEntity> queryUserForResult(QueryUserCondition condition);
+	QueryResult<UserEntity> queryUserForResult(QueryUserCondition condition, int firstResult, int maxResults);
+
+	/**
+	 * 查询用户信息（模式2）
+	 *
+	 * @param condition
+	 * @param pageNo
+	 * @param pageSize
+	 * @return
+	 */
+	PageResult<UserEntity> queryUserForResult2(QueryUserCondition condition, int pageNo, int pageSize);
 }

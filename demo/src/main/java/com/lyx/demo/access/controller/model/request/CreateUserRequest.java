@@ -1,4 +1,4 @@
-package com.lyx.demo.access.controller.bean.request;
+package com.lyx.demo.access.controller.model.request;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

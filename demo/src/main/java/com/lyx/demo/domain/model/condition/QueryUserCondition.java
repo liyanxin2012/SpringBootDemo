@@ -5,7 +5,7 @@ package com.lyx.demo.domain.model.condition;
  *
  * @author Ryan
  */
-public class QueryUserCondition {
+public class QueryUserCondition extends AbstractSortableCondition {
 
 	private String userId;
 

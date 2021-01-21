@@ -5,11 +5,12 @@ package com.lyx.demo.domain.exception;
  */
 public enum ErrorCodeEnum {
 
-	SUCCESS("DEMO.000", "Success"),
-	NOT_EXIST_USER("DEMO.001", "Not exit user!"),
-	NOT_FOUND_USER("DEMO.002", "Not found user userId=%s"),
+	SUCCESS("000", "Success"),
+	DELETED_USER("DEMO.001", "Deleted user userId=%s!"),
+	NOT_EXIST_USER("DEMO.002", "Not exist user userId=%s"),
 	ILLEGAL_USER_NAME("DEMO.003", "Illegal user name userName=%s"),
-	EXIST_USER_NAME("DEMO.004", "Exist user name userName=%s");
+	ILLEGAL_USER_STATUS("DEMO.004", "Illegal user status userId/status=%s/%s"),
+	EXIST_USER_NAME("DEMO.005", "Exist user name userName=%s");
 
 	private String code;
 
